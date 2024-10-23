@@ -14,6 +14,7 @@ probably through Visual Studio, might be called LLVM tools/clang.
 
 2. Setup `vcpkg`
 ```bash
+git submodule update --init --recursive
 cd vcpkg
 .\bootstrap-vcpkg.bat # on Windows
 ./bootstrap-vcpkg.sh # on Linux/Mac
