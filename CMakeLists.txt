@@ -38,7 +38,7 @@ target_include_directories(${PROJECT_NAME}
 # Compiler flags for Clang
 target_compile_options(${PROJECT_NAME} PRIVATE
     # Debug vs. Release compiler options
-    # $<$<CONFIG:Debug>:-g>
+    $<$<CONFIG:Debug>:-g>
     $<$<CONFIG:Release>:-O3>
     # Always on compiler options
     -Wall
