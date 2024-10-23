@@ -2,6 +2,7 @@
   "name": "hookline",
   "dependencies": [
     "glew",
+    "glm",
     "libpng",
     "opengl",
     "sdl2"
