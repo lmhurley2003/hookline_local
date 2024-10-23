@@ -1,16 +1,15 @@
-#include "Game.hpp"
+#include "Application.hpp"
 
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
-#include <glm/glm.hpp>
 
+#include <chrono>
+#include <glm/glm.hpp>
 #include <iostream>
-#include <vector>
 
 #include "constants.hpp"
-#include "util/load_save_png.hpp"
 
-bool Game::init() {
+bool Application::init() {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
     // Ask for an OpenGL context version 3.3, core profile, enable debug:
@@ -77,7 +76,7 @@ bool Game::init() {
     return true;
 }
 
-void Game::run() {
+void Application::run() {
     // this inline function will be called whenever the window is resized,
     //  and will update the window_size and drawable_size variables:
     glm::uvec2 window_size;    // size of window (layout pixels)
@@ -93,56 +92,46 @@ void Game::run() {
     };
     on_resize();
 
-    // This will loop until the current mode is set to null:
-    bool quit = false;
-    while (!quit) {
-        // every pass through the game loop creates one frame of output
-        //   by performing three steps:
+    auto last_time = std::chrono::high_resolution_clock::now();
+    float accumulator = 0.0f;
+    while (!quit_) {
+        // (1) Timing
+        auto current_time = std::chrono::high_resolution_clock::now();
+        float dt =
+            std::chrono::duration<float>(current_time - last_time).count();
+        dt = std::min(0.1f, dt);  // handle spiral of death
+        last_time = current_time;
 
-        {  //(1) process any events that are pending
-            static SDL_Event evt;
-            while (SDL_PollEvent(&evt) == 1) {
-                // handle resizing:
-                if (evt.type == SDL_WINDOWEVENT &&
-                    evt.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    on_resize();
-                }
-                // handle input:
-                if (/* TODO */ false) {
-                    // mode handled it; great
-                } else if (evt.type == SDL_QUIT) {
-                    quit = true;
-                    break;
-                } else if (evt.type == SDL_KEYDOWN &&
-                           evt.key.keysym.sym == SDLK_PRINTSCREEN) {
-                    // --- screenshot key ---
-                    std::string filename = "screenshot.png";
-                    std::cout << "Saving screenshot to '" << filename << "'."
-                              << std::endl;
-                    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-                    glReadBuffer(GL_FRONT);
-                    int w, h;
-                    SDL_GL_GetDrawableSize(window_, &w, &h);
-                    std::vector<glm::u8vec4> data(w * h);
-                    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE,
-                                 data.data());
-                    for (auto &px : data) {
-                        px.a = 0xff;
-                    }
-                    save_png(filename, glm::uvec2(w, h), data.data(),
-                             LowerLeftOrigin);
-                }
+        accumulator += dt;
+
+        static SDL_Event evt;
+        while (SDL_PollEvent(&evt) == 1) {
+            // handle resizing:
+            if (evt.type == SDL_WINDOWEVENT &&
+                evt.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                on_resize();
             }
-            if (quit) break;
+            // handle input:
+            if (/* TODO */ false) {
+                // mode handled it; great
+            } else if (evt.type == SDL_QUIT) {
+                quit_ = true;
+                break;
+            }
+        }
+        if (quit_) break;
+
+        // (3) Fixed timestep update
+        // https://www.gafferongames.com/post/fix_your_timestep/
+        while (accumulator >= hookline::fixed_dt) {
+            game_.update(dt);
+            accumulator -= hookline::fixed_dt;
         }
 
-        // TODO: Update
-        // TODO: Draw
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        // (4) Render
+        game_.render(drawable_size);
 
-        // Wait until the recently-drawn frame is shown before doing it all
-        // again:
+        // Vsync
         SDL_GL_SwapWindow(window_);
     }
 

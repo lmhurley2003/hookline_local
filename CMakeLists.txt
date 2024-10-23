@@ -22,10 +22,18 @@ set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 # Add source files
 file(GLOB_RECURSE SOURCES
     ${SOURCE_DIR}/*.cpp
-    ${SOURCE_DIR}/*.hpp)
+    ${SOURCE_DIR}/*.hpp
+)
 
 # Create executable
 add_executable(${PROJECT_NAME} ${SOURCES})
+
+# Include headers
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+)
+
 
 # Compiler flags for Clang
 target_compile_options(${PROJECT_NAME} PRIVATE
@@ -38,7 +46,6 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     -Werror
     # -Wpedantic -fsanitize=address -fsanitize=undefined
 )
-
 
 #=======================================================#
 # Libraries 
@@ -59,4 +66,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 # Formatting 
 #=======================================================#
 add_custom_target(format
-    COMMAND clang-format -i ${SOURCES})
+    COMMAND clang-format -i ${SOURCES}
+)

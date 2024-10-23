@@ -1,7 +1,7 @@
-#include "Game.hpp"
+#include "core/Application.hpp"
 
 int main() {
-    Game game;
-    game.init();
-    game.run();
+    Application app;
+    app.init();
+    app.run();
 }
