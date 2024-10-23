@@ -6,6 +6,7 @@
 #include <chrono>
 #include <glm/glm.hpp>
 #include <iostream>
+#include <memory>
 
 #include "constants.hpp"
 
@@ -43,6 +44,7 @@ bool Application::init() {
 
     // Create OpenGL context:
     context_ = SDL_GL_CreateContext(window_);
+    glewInit();
 
     if (!context_) {
         SDL_DestroyWindow(window_);
@@ -72,6 +74,9 @@ bool Application::init() {
 
     // Init Sound
     // --- TODO ---
+
+    // Init game
+    game_ = std::make_unique<Game>();
 
     return true;
 }
@@ -112,7 +117,7 @@ void Application::run() {
                 on_resize();
             }
             // handle input:
-            if (/* TODO */ false) {
+            if (game_->handle_event(evt)) {
                 // mode handled it; great
             } else if (evt.type == SDL_QUIT) {
                 quit_ = true;
@@ -124,12 +129,12 @@ void Application::run() {
         // (3) Fixed timestep update
         // https://www.gafferongames.com/post/fix_your_timestep/
         while (accumulator >= hookline::fixed_dt) {
-            game_.update(dt);
+            game_->update(dt);
             accumulator -= hookline::fixed_dt;
         }
 
         // (4) Render
-        game_.render(drawable_size);
+        game_->render(drawable_size);
 
         // Vsync
         SDL_GL_SwapWindow(window_);
