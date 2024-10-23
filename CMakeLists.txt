@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
+
+# Make sure to init vcpkg correctly before this
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
 project(hookline)
 
 #=======================================================#
@@ -24,9 +27,6 @@ file(GLOB_RECURSE SOURCES
 # Create executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-# Include directories
-# TODO: Vendor libraries from NEST libs
-
 # Compiler flags for Clang
 target_compile_options(${PROJECT_NAME} PRIVATE
     # Debug vs. Release compiler options
@@ -47,9 +47,10 @@ find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(PNG REQUIRED)
 find_package(SDL2 REQUIRED)
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME} PRIVATE
     GLEW::GLEW
-    ${OPENGL_LIBRARIES}
+    OpenGL::GL
+    OpenGL::GLU
     PNG::PNG
     SDL2::SDL2
 )
