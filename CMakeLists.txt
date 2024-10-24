@@ -48,6 +48,33 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 )
 
 #=======================================================#
+# Compiler Flags
+#=======================================================#
+
+find_package(GLEW REQUIRED)
+# Compiler flags for Clang (Linux, Mac) and MSVC (Windows)
+if(MSVC)
+    # Compiler flags for MSVC
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        # Debug vs. Release compiler options
+        $<$<CONFIG:Debug>:/Zi>
+        $<$<CONFIG:Release>:/O2>
+        # Always on compiler options
+        /W4 /WX  # Warning level 4 and treat warnings as errors
+    )
+else()
+    # Compiler flags for Clang
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        # Debug vs. Release compiler options
+        $<$<CONFIG:Debug>:-g>
+        $<$<CONFIG:Release>:-O3>
+        # Always on compiler options
+        -Wall -Wextra -Werror 
+        # Uncomment if needed: -Wpedantic -fsanitize=address -fsanitize=undefined
+    )
+endif()
+
+#=======================================================#
 # Libraries 
 #=======================================================#
 find_package(GLEW REQUIRED)
