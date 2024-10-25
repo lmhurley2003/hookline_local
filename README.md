@@ -1,8 +1,9 @@
-We will use `CMake`, and `clang` as the compiler on all platforms. We'll have consistent
-compilations and better error messages
+We will use `CMake`, and `clang` as the compiler on all platforms (maybe MSCV on Windows). More consistent
+compilations and clang has better error messages
 
 Experimenting with using `vcpkg` for package management so we can use libraries as we
-go easier.
+go easier. If you have problems with it let me know, we might just stop using it
+and make everyone manually download their libraries.
 
 # How to Build
 1. Install build tools
