@@ -37,3 +37,18 @@ struct ForceComponent {
                                glm::vec2{0.0f, 0.0f});
     }
 };
+
+/**
+ * Component in any objects than can collide (2D Axis Aligned Bounding Box)
+ *
+ * Width/height should be relative to overall object size, but we assume the
+ * position is at the center of the object
+ */
+struct ColliderComponent {
+    glm::vec2 size;
+    bool can_move = true;
+
+    ColliderComponent(glm::vec2 size_) : size(size_) {};
+    ColliderComponent(glm::vec2 size_, bool can_move_)
+        : size(size_), can_move(can_move_) {};
+};

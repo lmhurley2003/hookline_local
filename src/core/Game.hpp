@@ -11,11 +11,20 @@
 #include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
-#include <memory>
 #include <physics/Components.hpp>
 
+#include "physics/CollisionSystem.hpp"
 #include "physics/PhysicsSystem.hpp"
 
+/**
+ * Main Game class
+ *
+ * entt is the Entity-Component-System library we're using, any new
+ * objects/things need to be made as entities with components attached to them.
+ * Right now there's no spatial Scene data structure yet, we can do that soon.
+ * TransformComponents in every entity and then iterating over entt views are
+ * our implicit scene right now.
+ */
 class Game {
    public:
     Game();
@@ -34,6 +43,7 @@ class Game {
         Button up, down, left, right;
     } player_;
 
-    std::unique_ptr<PhysicsSystem> physics;
-    std::unique_ptr<entt::registry> registry;
+    PhysicsSystem physics;
+    CollisionSystem collisions;
+    entt::registry registry;
 };

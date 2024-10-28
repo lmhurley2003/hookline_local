@@ -8,11 +8,7 @@ constexpr glm::vec2 g_accel() { return {0.0f, hookline::g}; }
 void PhysicsSystem::update(float dt, entt::registry& registry) {
     auto view =
         registry.view<RigidBodyComponent, ForceComponent, TransformComponent>();
-    for (auto entity : view) {
-        auto& rigid_body = view.get<RigidBodyComponent>(entity);
-        auto& forces = view.get<ForceComponent>(entity);
-        auto& transform = view.get<TransformComponent>(entity);
-
+    for (auto [entity, rigid_body, forces, transform] : view.each()) {
         glm::vec2 force = forces.net_force();
         rigid_body.velocity += (force / rigid_body.mass + g_accel()) * dt;
         rigid_body.velocity -= hookline::drag * rigid_body.velocity * dt;
