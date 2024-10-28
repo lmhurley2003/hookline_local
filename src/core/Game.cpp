@@ -33,7 +33,6 @@ Game::Game() {
         registry.emplace<ForceComponent>(entity);
         registry.emplace<RenderComponent>(entity, get_basic_shape());
         registry.emplace<ColliderComponent>(entity, glm::vec2{1.0f, 1.0f});
-        registry.emplace<PlayerComponent>(entity);
         player_.entity = entity;
     }
 

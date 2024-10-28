@@ -33,8 +33,6 @@ class Game {
     void render(glm::uvec2 const &drawable_size);
     bool handle_event(SDL_Event const &event);
 
-    struct PlayerComponent {
-    } player;
     struct Player {
         entt::entity entity;
         struct Button {
