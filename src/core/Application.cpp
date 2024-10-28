@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
+#include <SDL_video.h>
 
 #include <chrono>
 #include <glm/glm.hpp>
@@ -87,13 +88,16 @@ void Application::run() {
     glm::uvec2 window_size;    // size of window (layout pixels)
     glm::uvec2 drawable_size;  // size of drawable (physical pixels)
     // On non-highDPI displays, window_size will always equal drawable_size.
+
+    // For now, no resize
+    SDL_SetWindowResizable(window_, SDL_FALSE);
     auto on_resize = [&]() {
         int w, h;
         SDL_GetWindowSize(window_, &w, &h);
-        window_size = glm::uvec2(w, h);
+        window_size = glm::uvec2(h, h);
         SDL_GL_GetDrawableSize(window_, &w, &h);
-        drawable_size = glm::uvec2(w, h);
-        glViewport(0, 0, drawable_size.x, drawable_size.y);
+        drawable_size = glm::uvec2(h, h);
+        glViewport(0, 0, drawable_size.y, drawable_size.y);
     };
     on_resize();
 
