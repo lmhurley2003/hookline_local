@@ -1,6 +1,7 @@
 {
   "name": "hookline",
   "dependencies": [
+    "entt",
     "glew",
     "glm",
     "libpng",

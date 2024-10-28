@@ -23,6 +23,11 @@ struct ForceComponent {
     // TODO: preallocate memory for common forces
     // TODO: rotational forces?
 
+    void set_force(glm::vec2 linear_force) {
+        linear_forces.clear();
+        add_force(linear_force);
+    }
+
     void add_force(glm::vec2 linear_force) {
         linear_forces.push_back(linear_force);
     }
