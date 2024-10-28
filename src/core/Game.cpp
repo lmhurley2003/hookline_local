@@ -11,21 +11,31 @@
 #include <array>
 #include <glm/common.hpp>
 
+#include "physics/Components.hpp"
+
 void Game::update(float dt) {
     (void)dt;
-    constexpr float velocity = 0.75f;
-    if (player_.up.pressed && !player_.down.pressed) {
-        player_.velocity = glm::vec2{0.0f, velocity};
-    } else if (player_.down.pressed && !player_.up.pressed) {
-        player_.velocity = glm::vec2{0.0f, -velocity};
-    } else if (player_.left.pressed && !player_.right.pressed) {
-        player_.velocity = glm::vec2{-velocity, 0.0f};
-    } else if (player_.right.pressed && !player_.left.pressed) {
-        player_.velocity = glm::vec2{velocity, 0.0f};
-    } else {
-        player_.velocity = glm::vec2{0.0f, 0.0f};
+    // constexpr float velocity = 0.75f;
+    // Input
+    player_.forces = ForceComponent();
+    if (player_.up.pressed) {
+        player_.forces.add_force({0, 2.0f});
     }
-    player_.position += player_.velocity * dt;
+    if (player_.down.pressed) {
+        player_.forces.add_force({0, -2.0f});
+    }
+    if (player_.left.pressed) {
+        player_.forces.add_force({-1.0f, 0.0f});
+    }
+    if (player_.right.pressed) {
+        player_.forces.add_force({1.0f, 0.0f});
+    }
+    player_.transform.position += player_.rigid_body.velocity * dt;
+
+    // Physics
+    auto x = std::vector({std::make_tuple(&player_.rigid_body, &player_.forces,
+                                          &player_.transform)});
+    physics->update(dt, x);
 }
 
 void Game::render(glm::uvec2 const &drawable_size) {
@@ -39,17 +49,17 @@ void Game::render(glm::uvec2 const &drawable_size) {
 std::array<float, 8> Game::Player::vertices() {
     return {
         // BL
-        position.x - size.x / 2.0f,
-        position.y - size.y / 2.0f,
+        transform.position.x - transform.scale.x / 2.0f,
+        transform.position.y - transform.scale.y / 2.0f,
         // BR
-        position.x + size.x / 2.0f,
-        position.y - size.y / 2.0f,
+        transform.position.x + transform.scale.x / 2.0f,
+        transform.position.y - transform.scale.y / 2.0f,
         // TL
-        position.x - size.x / 2.0f,
-        position.y + size.y / 2.0f,
+        transform.position.x - transform.scale.x / 2.0f,
+        transform.position.y + transform.scale.y / 2.0f,
         // TR
-        position.x + size.x / 2.0f,
-        position.y + size.y / 2.0f,
+        transform.position.x + transform.scale.x / 2.0f,
+        transform.position.y + transform.scale.y / 2.0f,
     };
 }
 

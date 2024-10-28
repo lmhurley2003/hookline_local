@@ -9,7 +9,11 @@
 #include <SDL2/SDL_events.h>
 
 #include <glm/glm.hpp>
+#include <memory>
+#include <physics/Components.hpp>
 
+#include "TransformComponent.hpp"
+#include "physics/PhysicsSystem.hpp"
 #include "shader/PlayerTestShaderProgram.hpp"
 
 class Game {
@@ -18,11 +22,10 @@ class Game {
     void render(glm::uvec2 const &drawable_size);
     bool handle_event(SDL_Event const &event);
 
-   private:
     struct Player {
-        glm::vec2 position = {0.0f, 0.0f};
-        glm::vec2 velocity = {0.0f, 0.0f};
-        glm::vec2 size = {0.1f, 0.1f};
+        TransformComponent transform;
+        RigidBodyComponent rigid_body;
+        ForceComponent forces;
 
         struct Button {
             bool pressed;
@@ -34,4 +37,6 @@ class Game {
         std::array<float, 8> vertices();
         void render();
     } player_;
+
+    std::unique_ptr<PhysicsSystem> physics;
 };

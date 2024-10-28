@@ -25,6 +25,8 @@ struct PlayerTestShaderProgram {
             "void main() {\n"
             "   FragColor = vec4(0.0, 0.0, 0.0, 1.0);\n"
             "}\n");
+
+        position_vec2 = glGetAttribLocation(program, "position");
     }
 
     ~PlayerTestShaderProgram() { glDeleteProgram(program); }

@@ -11,7 +11,7 @@
 #include "constants.hpp"
 
 bool Application::init() {
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+    SDL_Init(SDL_INIT_VIDEO);
 
     // Ask for an OpenGL context version 3.3, core profile, enable debug:
     SDL_GL_ResetAttributes();
