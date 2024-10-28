@@ -13,11 +13,13 @@
 #include <physics/Components.hpp>
 
 #include "TransformComponent.hpp"
+#include "core/RenderComponent.hpp"
 #include "physics/PhysicsSystem.hpp"
-#include "shader/PlayerTestShaderProgram.hpp"
 
 class Game {
    public:
+    Game() = default;
+
     void update(float dt);
     void render(glm::uvec2 const &drawable_size);
     bool handle_event(SDL_Event const &event);
@@ -26,16 +28,20 @@ class Game {
         TransformComponent transform;
         RigidBodyComponent rigid_body;
         ForceComponent forces;
+        RenderComponent renderable;
 
         struct Button {
             bool pressed;
         };
         Button up, down, left, right;
 
-        // Rendering -- obviously bad, just for demo
-        PlayerTestShaderProgram program;
-        std::array<float, 8> vertices();
-        void render();
+        static std::vector<glm::vec2> get_vertices() {
+            return {/*BL*/ {-0.5, -0.5}, /*BR*/ {0.5, -0.5},
+                    /*TL*/ {-0.5, 0.5}, /*TR*/ {0.5, 0.5}};
+        }
+
+        Player() : renderable(get_vertices()) {};
+        ~Player() = default;
     } player_;
 
     std::unique_ptr<PhysicsSystem> physics;

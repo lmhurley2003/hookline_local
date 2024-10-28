@@ -8,7 +8,6 @@
 
 #include <GL/glew.h>
 
-#include <array>
 #include <glm/common.hpp>
 
 #include "physics/Components.hpp"
@@ -43,49 +42,7 @@ void Game::render(glm::uvec2 const &drawable_size) {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    player_.render();
-}
-
-std::array<float, 8> Game::Player::vertices() {
-    return {
-        // BL
-        transform.position.x - transform.scale.x / 2.0f,
-        transform.position.y - transform.scale.y / 2.0f,
-        // BR
-        transform.position.x + transform.scale.x / 2.0f,
-        transform.position.y - transform.scale.y / 2.0f,
-        // TL
-        transform.position.x - transform.scale.x / 2.0f,
-        transform.position.y + transform.scale.y / 2.0f,
-        // TR
-        transform.position.x + transform.scale.x / 2.0f,
-        transform.position.y + transform.scale.y / 2.0f,
-    };
-}
-
-void Game::Player::render() {
-    GLuint vao, vbo;
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-
-    // Vert data
-    auto verts = vertices();
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts.data(), GL_STATIC_DRAW);
-
-    // VAO
-    glBindVertexArray(vao);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glEnableVertexAttribArray(0);
-
-    // Draw
-    glUseProgram(program.program);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
+    player_.renderable.render(player_.transform);
 }
 
 bool Game::handle_event(SDL_Event const &event) {
