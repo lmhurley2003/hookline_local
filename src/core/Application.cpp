@@ -121,7 +121,7 @@ void Application::run() {
                 on_resize();
             }
             // handle input:
-            if (game_->handle_event(evt)) {
+            if (game_->handle_event(evt, drawable_size)) {
                 // mode handled it; great
             } else if (evt.type == SDL_QUIT) {
                 quit_ = true;

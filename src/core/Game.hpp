@@ -30,16 +30,21 @@ class Game {
     Game();
 
     void update(float dt);
-    void render(glm::uvec2 const &drawable_size);
-    bool handle_event(SDL_Event const &event);
+    void render(glm::uvec2 drawable_size);
+    bool handle_event(SDL_Event const &event, glm::uvec2 drawable_size);
 
     struct Player {
         entt::entity entity;
         struct Button {
-            bool pressed;
+            bool pressed = false;
         };
         Button up, down, left, right;
+        struct Mouse {
+            bool pressed = false;
+            glm::vec2 position;
+        } mouse;
     } player_;
+    entt::entity grapple_entity;
 
     PhysicsSystem physics;
     CollisionSystem collisions;

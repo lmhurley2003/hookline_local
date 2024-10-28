@@ -24,7 +24,7 @@ struct ForceComponent {
     // TODO: rotational forces?
 
     void set_force(glm::vec2 linear_force) {
-        linear_forces.clear();
+        reset();
         add_force(linear_force);
     }
 
@@ -36,6 +36,8 @@ struct ForceComponent {
         return std::accumulate(linear_forces.begin(), linear_forces.end(),
                                glm::vec2{0.0f, 0.0f});
     }
+
+    void reset() { linear_forces.clear(); }
 };
 
 /**

@@ -15,9 +15,6 @@ class RenderComponent {
     void render(TransformComponent transform);
 
    private:
-    void initializeShaders();
-    void setupBuffers();
-    void cleanupBuffers();
     std::vector<float> vertices() const;
 
     PlayerTestShaderProgram program;

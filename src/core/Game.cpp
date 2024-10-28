@@ -7,13 +7,17 @@
 #include "Game.hpp"
 
 #include <GL/glew.h>
+#include <SDL2/SDL.h>
 
-#include <glm/common.hpp>
+#include <glm/glm.hpp>
 
+#include "core/InputComponent.hpp"
 #include "core/RenderComponent.hpp"
 #include "core/TransformComponent.hpp"
 #include "physics/Components.hpp"
+#include "physics/GrapplingHook.hpp"
 #include "physics/PhysicsSystem.hpp"
+#include "physics/util.hpp"
 
 namespace {
 static std::vector<glm::vec2> get_basic_shape() {
@@ -25,15 +29,16 @@ static std::vector<glm::vec2> get_basic_shape() {
 Game::Game() {
     // Initialize player
     {
-        auto entity = registry.create();
+        auto player = registry.create();
         registry.emplace<TransformComponent>(
-            entity, TransformComponent(glm::vec2{0.0f, 0.0f},
+            player, TransformComponent(glm::vec2{0.0f, 0.0f},
                                        glm::vec2{0.05f, 0.05f}, 0.0f));
-        registry.emplace<RigidBodyComponent>(entity);
-        registry.emplace<ForceComponent>(entity);
-        registry.emplace<RenderComponent>(entity, get_basic_shape());
-        registry.emplace<ColliderComponent>(entity, glm::vec2{1.0f, 1.0f});
-        player_.entity = entity;
+        registry.emplace<RigidBodyComponent>(player);
+        registry.emplace<ForceComponent>(player);
+        registry.emplace<ColliderComponent>(player, glm::vec2{1.0f, 1.0f});
+        registry.emplace<RenderComponent>(player, get_basic_shape());
+        registry.emplace<InputComponent>(player);
+        player_.entity = player;
     }
 
     // Create an immovable box somewhere
@@ -43,31 +48,48 @@ Game::Game() {
             box, TransformComponent(glm::vec2{0.5f, 0.5f},
                                     glm::vec2{0.05f, 0.05f}, 0.0f));
         registry.emplace<RigidBodyComponent>(box);
-        registry.emplace<RenderComponent>(box, get_basic_shape());
         registry.emplace<ColliderComponent>(box, glm::vec2{1.0f, 1.0f}, false);
+        registry.emplace<RenderComponent>(box, get_basic_shape());
+    }
+
+    // Create grappling hook
+    {
+        grapple_entity = registry.create();
+        registry.emplace<GrapplingHookComponent>(grapple_entity,
+                                                 player_.entity);
     }
 }
 
 void Game::update(float dt) {
     (void)dt;
     // Input
-    // TODO: Put input into a separate input component and handle this movement
-    // in its own system
-    auto &forces = registry.get<ForceComponent>(player_.entity);
 
+    /* -- PLAYER INPUT & GRAPPLE -- */
+    // TODO: Put input into a separate input component and handle this movement
+    auto &inputs = registry.get<InputComponent>(player_.entity);
     constexpr float force_amount = 30.0f;
-    forces.set_force({0.0, 0.0f});
+    inputs.movement = {0.0f, 0.0f};
     if (player_.up.pressed) {
-        forces.set_force({0, force_amount});
+        inputs.movement += glm::vec2{0.0f, force_amount};
     }
     if (player_.down.pressed) {
-        forces.set_force({0, -force_amount});
+        inputs.movement += glm::vec2{0, -force_amount};
     }
     if (player_.left.pressed) {
-        forces.set_force({-force_amount, 0.0f});
+        inputs.movement += glm::vec2{-force_amount, 0.0f};
     }
     if (player_.right.pressed) {
-        forces.set_force({force_amount, 0.0f});
+        inputs.movement += glm::vec2{force_amount, 0.0f};
+    }
+    // Grapple inputs
+    auto &player_transform = registry.get<TransformComponent>(player_.entity);
+    auto &grapple = registry.get<GrapplingHookComponent>(grapple_entity);
+    if (player_.mouse.pressed) {
+        grapple.try_attach(player_transform.position, player_.mouse.position,
+                           registry);
+    }
+    if (!player_.mouse.pressed) {
+        grapple.detach();
     }
 
     // Physics
@@ -77,7 +99,7 @@ void Game::update(float dt) {
     collisions.update(dt, registry);
 }
 
-void Game::render(glm::uvec2 const &drawable_size) {
+void Game::render(glm::uvec2 drawable_size) {
     (void)drawable_size;
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -90,7 +112,7 @@ void Game::render(glm::uvec2 const &drawable_size) {
     }
 }
 
-bool Game::handle_event(SDL_Event const &event) {
+bool Game::handle_event(SDL_Event const &event, glm::uvec2 drawable_size) {
     if (event.type == SDL_KEYDOWN) {
         if (event.key.keysym.sym == SDLK_a) {
             player_.left.pressed = true;
@@ -118,6 +140,18 @@ bool Game::handle_event(SDL_Event const &event) {
         } else if (event.key.keysym.sym == SDLK_s) {
             player_.down.pressed = false;
             return true;
+        }
+    } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+        if (event.button.button == SDL_BUTTON_LEFT) {
+            int x, y;
+            SDL_GetMouseState(&x, &y);
+            player_.mouse.pressed = true;
+            player_.mouse.position =
+                hookline::convert_mouse_to_opengl(x, y, drawable_size);
+        }
+    } else if (event.type == SDL_MOUSEBUTTONUP) {
+        if (event.button.button == SDL_BUTTON_LEFT) {
+            player_.mouse.pressed = false;
         }
     }
     return false;
