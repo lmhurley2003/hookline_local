@@ -31,6 +31,7 @@ void RenderComponent::render(TransformComponent transform) {
     glUniform2f(program.u_position_loc, transform.position.x,
                 transform.position.y);
     glUniform2f(program.u_scale_loc, transform.scale.x, transform.scale.y);
+    glUniform1f(program.u_rotation_loc, transform.rotation);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, verts.size());
 

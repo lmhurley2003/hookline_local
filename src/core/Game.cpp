@@ -26,8 +26,9 @@ Game::Game() {
     // Initialize player
     {
         auto entity = registry.create();
-        registry.emplace<TransformComponent>(entity, glm::vec2{0.0f, 0.0f},
-                                             glm::vec2{0.05f, 0.05f});
+        registry.emplace<TransformComponent>(
+            entity, TransformComponent(glm::vec2{0.0f, 0.0f},
+                                       glm::vec2{0.05f, 0.05f}, 0.0f));
         registry.emplace<RigidBodyComponent>(entity);
         registry.emplace<ForceComponent>(entity);
         registry.emplace<RenderComponent>(entity, get_basic_shape());
@@ -39,8 +40,9 @@ Game::Game() {
     // Create an immovable box somewhere
     {
         auto box = registry.create();
-        registry.emplace<TransformComponent>(box, glm::vec2{0.5f, 0.5f},
-                                             glm::vec2{0.05f, 0.05f});
+        registry.emplace<TransformComponent>(
+            box, TransformComponent(glm::vec2{0.5f, 0.5f},
+                                    glm::vec2{0.05f, 0.05f}, 0.0f));
         registry.emplace<RigidBodyComponent>(box);
         registry.emplace<RenderComponent>(box, get_basic_shape());
         registry.emplace<ColliderComponent>(box, glm::vec2{1.0f, 1.0f}, false);
@@ -50,6 +52,8 @@ Game::Game() {
 void Game::update(float dt) {
     (void)dt;
     // Input
+    // TODO: Put input into a separate input component and handle this movement
+    // in its own system
     auto &forces = registry.get<ForceComponent>(player_.entity);
 
     constexpr float force_amount = 30.0f;
