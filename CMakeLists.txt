@@ -34,24 +34,10 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_SOURCE_DIR}/src
 )
 
-
-# Compiler flags for Clang
-target_compile_options(${PROJECT_NAME} PRIVATE
-    # Debug vs. Release compiler options
-    $<$<CONFIG:Debug>:-g>
-    $<$<CONFIG:Release>:-O3>
-    # Always on compiler options
-    -Wall
-    -Wextra
-    -Werror
-    # -Wpedantic -fsanitize=address -fsanitize=undefined
-)
-
 #=======================================================#
 # Compiler Flags
 #=======================================================#
 
-find_package(GLEW REQUIRED)
 # Compiler flags for Clang (Linux, Mac) and MSVC (Windows)
 if(MSVC)
     # Compiler flags for MSVC
