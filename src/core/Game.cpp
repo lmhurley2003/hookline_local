@@ -10,7 +10,6 @@
 #include <SDL2/SDL.h>
 
 #include <glm/glm.hpp>
-#include <iostream>
 
 #include "constants.hpp"
 #include "core/InputComponent.hpp"
@@ -70,9 +69,9 @@ Game::Game() {
 
     // Spawn some collectables for demo
     {
-        // collectables.spawn_random(registry);
-        // collectables.spawn_random(registry);
-        // collectables.spawn_random(registry);
+        collectables.spawn_random(registry);
+        collectables.spawn_random(registry);
+        collectables.spawn_random(registry);
     }
 }
 
@@ -126,7 +125,7 @@ void Game::update(float dt) {
     // System updates
     physics.update(dt, registry);
     collisions.update(dt, registry);
-    // collectables.update(dt, registry, player_.entity);
+    collectables.update(dt, registry, player_.entity);
 }
 
 void Game::render(glm::uvec2 drawable_size) {

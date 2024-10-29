@@ -9,7 +9,8 @@
 
 // TODO: For some reason passing a constructed RenderComponent is broken
 // to entt.emplace<RenderComponent>(entity, RenderComponent(...)) and leads to
-// no rendering Maybe a bad copy constructor
+// no rendering ---> bad copy/move constructor, just don't use that or add a
+// move constructor here
 
 class RenderComponent {
    public:
