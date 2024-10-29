@@ -3,38 +3,46 @@
 #include "core/TransformComponent.hpp"
 
 RenderComponent::RenderComponent(std::vector<glm::vec2>&& vertices)
-    : vao(0), vbo(0) {
-    verts = std::move(vertices);
+    : vao_(0), vbo_(0) {
+    verts_ = std::move(vertices);
 
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
+    glGenVertexArrays(1, &vao_);
+    glGenBuffers(1, &vbo_);
 }
 
 RenderComponent::~RenderComponent() {
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &vao_);
+    glDeleteBuffers(1, &vbo_);
 }
 
 void RenderComponent::render(TransformComponent transform) {
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(verts[0]), verts.data(),
+    if (!visible_) {
+        return;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+    glBufferData(GL_ARRAY_BUFFER, verts_.size() * sizeof(verts_[0]), verts_.data(),
                  GL_STATIC_DRAW);
 
-    glBindVertexArray(vao);
-    glVertexAttribPointer(program.position_loc, 2, GL_FLOAT, GL_FALSE, 0,
+    glBindVertexArray(vao_);
+    glVertexAttribPointer(program_.position_loc, 2, GL_FLOAT, GL_FALSE, 0,
                           nullptr);
-    glEnableVertexAttribArray(program.position_loc);
+    glEnableVertexAttribArray(program_.position_loc);
 
-    glUseProgram(program.program);
+    glUseProgram(program_.program);
 
     // Set uniforms
-    glUniform2f(program.u_position_loc, transform.position.x,
+    glUniform2f(program_.u_position_loc, transform.position.x,
                 transform.position.y);
-    glUniform2f(program.u_scale_loc, transform.scale.x, transform.scale.y);
-    glUniform1f(program.u_rotation_loc, transform.rotation);
+    glUniform2f(program_.u_scale_loc, transform.scale.x, transform.scale.y);
+    glUniform1f(program_.u_rotation_loc, transform.rotation);
 
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, verts.size());
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, verts_.size());
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void RenderComponent::set_visible(bool visible) {
+    visible_ = visible;
 }
