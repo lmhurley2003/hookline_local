@@ -8,7 +8,6 @@
 
 #include <SDL2/SDL_events.h>
 
-#include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
 #include <physics/Components.hpp>

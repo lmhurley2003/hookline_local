@@ -7,10 +7,11 @@
 #include "physics/util.hpp"
 
 struct GrapplingHookComponent {
-    static constexpr float max_length = 10.0f;
+    static constexpr float max_length = 5.0f;
     static constexpr float pull_force = 30.0f;
     static constexpr float deactivate_dist = 0.01f;
 
+    entt::entity self;
     entt::entity user;
     bool attached = false;
     glm::vec2 attached_position;
@@ -24,8 +25,9 @@ struct GrapplingHookComponent {
 
         glm::vec2 hit_position;
         glm::vec2 direction = glm::normalize(target_position - start_position);
+        std::vector<entt::entity> ignore_list = {user, self};
         if (hookline::raycast(start_position, direction, max_length, registry,
-                              &hit_position)) {
+                              ignore_list, &hit_position)) {
             std::cout << "Attached grapple\n";
             attached = true;
             attached_position = hit_position;
@@ -40,5 +42,6 @@ struct GrapplingHookComponent {
         std::cout << "Detached grapple\n";
     }
 
-    GrapplingHookComponent(entt::entity user_) : user(user_) {}
+    GrapplingHookComponent(entt::entity self_, entt::entity user_)
+        : self(self_), user(user_) {}
 };

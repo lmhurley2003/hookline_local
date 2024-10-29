@@ -55,8 +55,12 @@ Game::Game() {
     // Create grappling hook
     {
         grapple_entity = registry.create();
-        registry.emplace<GrapplingHookComponent>(grapple_entity,
+        registry.emplace<TransformComponent>(
+            grapple_entity, TransformComponent(glm::vec2(0.0f, 0.0f),
+                                               glm::vec2{0.05f, 0.05f}, 0.0f));
+        registry.emplace<GrapplingHookComponent>(grapple_entity, grapple_entity,
                                                  player_.entity);
+        registry.emplace<RenderComponent>(grapple_entity, get_basic_shape());
     }
 }
 
@@ -81,15 +85,31 @@ void Game::update(float dt) {
     if (player_.right.pressed) {
         inputs.movement += glm::vec2{force_amount, 0.0f};
     }
-    // Grapple inputs
+    // Grapple inputs - all manual stuff, fix later
     auto &player_transform = registry.get<TransformComponent>(player_.entity);
-    auto &grapple = registry.get<GrapplingHookComponent>(grapple_entity);
+    auto [grapple_transform, grapple_renderable, grapple] =
+        registry
+            .get<TransformComponent, RenderComponent, GrapplingHookComponent>(
+                grapple_entity);
+    grapple_transform.position = player_transform.position;
     if (player_.mouse.pressed) {
         grapple.try_attach(player_transform.position, player_.mouse.position,
                            registry);
     }
     if (!player_.mouse.pressed) {
         grapple.detach();
+    }
+    // Grapple rendering setup
+    grapple_renderable.set_visible(grapple.attached);
+    if (grapple.attached) {
+        grapple_transform.position =
+            (player_transform.position + grapple.attached_position) / 2.0f;
+        grapple_transform.scale = {
+            glm::distance(player_transform.position, grapple.attached_position),
+            0.01};
+        glm::vec2 direction = glm::normalize(grapple.attached_position -
+                                             player_transform.position);
+        grapple_transform.rotation = -glm::atan(direction.y, direction.x);
     }
 
     // Physics

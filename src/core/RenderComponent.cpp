@@ -21,8 +21,8 @@ void RenderComponent::render(TransformComponent transform) {
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(GL_ARRAY_BUFFER, verts_.size() * sizeof(verts_[0]), verts_.data(),
-                 GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, verts_.size() * sizeof(verts_[0]),
+                 verts_.data(), GL_STATIC_DRAW);
 
     glBindVertexArray(vao_);
     glVertexAttribPointer(program_.position_loc, 2, GL_FLOAT, GL_FALSE, 0,
@@ -43,6 +43,4 @@ void RenderComponent::render(TransformComponent transform) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void RenderComponent::set_visible(bool visible) {
-    visible_ = visible;
-}
+void RenderComponent::set_visible(bool visible) { visible_ = visible; }
