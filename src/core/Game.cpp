@@ -55,6 +55,19 @@ Game::Game() {
         }
     }
 
+    // Create a ground
+    {
+        auto box = registry.create();
+        registry.emplace<TransformComponent>(
+            box,
+            TransformComponent(glm::vec2{0.0f, -0.95}, glm::vec2{4.0f, 0.05f}, 0.0f));
+        registry.emplace<RigidBodyComponent>(box);
+        registry.emplace<ColliderComponent>(
+            box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false));
+        registry.emplace<RenderComponent>(
+            box, hookline::get_basic_shape_debug(), true);
+    }
+
     // Create grappling hook
     {
         grapple_entity = registry.create();

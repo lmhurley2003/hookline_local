@@ -15,10 +15,14 @@ void CollectableSystem::update(float dt, entt::registry &registry,
     (void)dt;
     auto player_position = registry.get<TransformComponent>(player).position;
     auto view = registry.view<TransformComponent, CollectableComponent>();
+    std::vector<entt::entity> to_pickup;
     for (auto [entity, transform, collectable] : view.each()) {
         if (glm::distance(transform.position, player_position) <= 0.1f) {
-            on_pickup(registry, entity);
+            to_pickup.push_back(entity);
         }
+    }
+    for (auto entity : to_pickup) {
+        on_pickup(registry, entity);
     }
 }
 

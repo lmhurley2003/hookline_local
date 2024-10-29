@@ -103,6 +103,7 @@ void Application::run() {
 
     auto last_time = std::chrono::high_resolution_clock::now();
     float accumulator = 0.0f;
+    (void)accumulator;
     while (!quit_) {
         // (1) Timing
         auto current_time = std::chrono::high_resolution_clock::now();
@@ -132,10 +133,13 @@ void Application::run() {
 
         // (3) Fixed timestep update
         // https://www.gafferongames.com/post/fix_your_timestep/
+#if 0
         while (accumulator >= hookline::fixed_dt) {
             game_->update(dt);
             accumulator -= hookline::fixed_dt;
         }
+#endif
+        game_->update(dt);
 
         // (4) Render
         game_->render(drawable_size);
