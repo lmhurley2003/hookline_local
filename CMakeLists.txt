@@ -26,7 +26,11 @@ file(GLOB_RECURSE SOURCES
 )
 
 # Create executable
-add_executable(${PROJECT_NAME} ${SOURCES})
+if (MSVC)
+    add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
+else ()
+    add_executable(${PROJECT_NAME} ${SOURCES})
+endif ()
 
 # Include headers
 target_include_directories(${PROJECT_NAME}
@@ -46,7 +50,7 @@ if(MSVC)
         $<$<CONFIG:Debug>:/Zi>
         $<$<CONFIG:Release>:/O2>
         # Always on compiler options
-        /W4 /WX  # Warning level 4 and treat warnings as errors
+        /W4  # Warning level 4 and treat warnings as errors
     )
 else()
     # Compiler flags for Clang

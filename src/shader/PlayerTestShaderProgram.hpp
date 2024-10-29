@@ -47,10 +47,10 @@ struct PlayerTestShaderProgram {
     GLuint program = 0;
 
     // Attribute (per-vertex variable) locations
-    GLuint position_loc = -1;
+    GLuint position_loc = (unsigned int) -1;
 
     // Uniform locations
-    GLuint u_position_loc = -1;
-    GLuint u_scale_loc = -1;
-    GLuint u_rotation_loc = -1;
+    GLuint u_position_loc = (unsigned int) -1;
+    GLuint u_scale_loc = (unsigned int) -1;
+    GLuint u_rotation_loc = (unsigned int) -1;
 };
