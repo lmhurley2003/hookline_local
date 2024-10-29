@@ -10,6 +10,7 @@
 #include <SDL2/SDL.h>
 
 #include <glm/glm.hpp>
+#include <iostream>
 
 #include "constants.hpp"
 #include "core/InputComponent.hpp"
@@ -19,13 +20,7 @@
 #include "physics/GrapplingHook.hpp"
 #include "physics/PhysicsSystem.hpp"
 #include "physics/util.hpp"
-
-namespace {
-static std::vector<glm::vec2> get_basic_shape() {
-    return {/*BL*/ {-0.5, -0.5}, /*BR*/ {0.5, -0.5},
-            /*TL*/ {-0.5, 0.5}, /*TR*/ {0.5, 0.5}};
-}
-}  // namespace
+#include "util/misc.hpp"
 
 Game::Game() {
     // Initialize player
@@ -37,20 +32,28 @@ Game::Game() {
         registry.emplace<RigidBodyComponent>(player);
         registry.emplace<ForceComponent>(player);
         registry.emplace<ColliderComponent>(player, glm::vec2{1.0f, 1.0f});
-        registry.emplace<RenderComponent>(player, get_basic_shape());
+        registry.emplace<RenderComponent>(player,
+                                          hookline::get_basic_shape_debug());
         registry.emplace<InputComponent>(player);
         player_.entity = player;
     }
 
-    // Create an immovable box somewhere
+    // Create a few immovable boxes somewhere
     {
-        auto box = registry.create();
-        registry.emplace<TransformComponent>(
-            box, TransformComponent(glm::vec2{0.5f, 0.5f},
-                                    glm::vec2{0.05f, 0.05f}, 0.0f));
-        registry.emplace<RigidBodyComponent>(box);
-        registry.emplace<ColliderComponent>(box, glm::vec2{1.0f, 1.0f}, false);
-        registry.emplace<RenderComponent>(box, get_basic_shape());
+        std::vector<glm::vec2> positions = {glm::vec2{0.5f, 0.5f},
+                                            glm::vec2{-0.5f, 0.5f},
+                                            glm::vec2{-0.5f, -0.5f}};
+        for (const auto &position : positions) {
+            auto box = registry.create();
+            registry.emplace<TransformComponent>(
+                box,
+                TransformComponent(position, glm::vec2{0.05f, 0.05f}, 0.0f));
+            registry.emplace<RigidBodyComponent>(box);
+            registry.emplace<ColliderComponent>(
+                box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false));
+            registry.emplace<RenderComponent>(
+                box, hookline::get_basic_shape_debug(), true);
+        }
     }
 
     // Create grappling hook
@@ -61,7 +64,15 @@ Game::Game() {
                                                glm::vec2{0.05f, 0.05f}, 0.0f));
         registry.emplace<GrapplingHookComponent>(grapple_entity, grapple_entity,
                                                  player_.entity);
-        registry.emplace<RenderComponent>(grapple_entity, get_basic_shape());
+        registry.emplace<RenderComponent>(grapple_entity,
+                                          hookline::get_basic_shape_debug());
+    }
+
+    // Spawn some collectables for demo
+    {
+        // collectables.spawn_random(registry);
+        // collectables.spawn_random(registry);
+        // collectables.spawn_random(registry);
     }
 }
 
@@ -112,11 +123,10 @@ void Game::update(float dt) {
         grapple_transform.rotation = -glm::atan(direction.y, direction.x);
     }
 
-    // Physics
+    // System updates
     physics.update(dt, registry);
-
-    // Collision
     collisions.update(dt, registry);
+    // collectables.update(dt, registry, player_.entity);
 }
 
 void Game::render(glm::uvec2 drawable_size) {

@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <SDL2/SDL_events.h>
+#include <SDL2/SDL.h>
 
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>

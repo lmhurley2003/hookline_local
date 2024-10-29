@@ -2,10 +2,9 @@
 
 #include "core/TransformComponent.hpp"
 
-RenderComponent::RenderComponent(std::vector<glm::vec2>&& vertices)
-    : vao_(0), vbo_(0) {
-    verts_ = std::move(vertices);
-
+RenderComponent::RenderComponent(std::vector<glm::vec2>&& vertices,
+                                 bool visible)
+    : vao_(0), vbo_(0), verts_(std::move(vertices)), visible_(visible) {
     glGenVertexArrays(1, &vao_);
     glGenBuffers(1, &vbo_);
 }

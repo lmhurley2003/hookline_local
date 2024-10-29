@@ -36,7 +36,9 @@ void CollisionSystem::update(float dt, entt::registry &registry) {
             if (entity1 == entity2) continue;
             if (check_collision_aabb(transform1, collider1, transform2,
                                      collider2)) {
-                handle_collision(entity1, entity2, registry);
+                if (collider1.can_collide && collider2.can_collide) {
+                    handle_collision(entity1, entity2, registry);
+                }
             }
         }
     }

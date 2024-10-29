@@ -48,9 +48,10 @@ struct ForceComponent {
  */
 struct ColliderComponent {
     glm::vec2 size;
+    bool can_collide = true;
     bool can_move = true;
 
     ColliderComponent(glm::vec2 size_) : size(size_) {};
-    ColliderComponent(glm::vec2 size_, bool can_move_)
-        : size(size_), can_move(can_move_) {};
+    ColliderComponent(glm::vec2 size_, bool can_collide_, bool can_move_)
+        : size(size_), can_collide(can_collide_), can_move(can_move_) {};
 };

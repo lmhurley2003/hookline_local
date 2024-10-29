@@ -7,9 +7,14 @@
 #include "core/TransformComponent.hpp"
 #include "shader/PlayerTestShaderProgram.hpp"
 
+// TODO: For some reason passing a constructed RenderComponent is broken
+// to entt.emplace<RenderComponent>(entity, RenderComponent(...)) and leads to
+// no rendering Maybe a bad copy constructor
+
 class RenderComponent {
    public:
-    RenderComponent(std::vector<glm::vec2>&& vertices);
+    RenderComponent() = delete;
+    RenderComponent(std::vector<glm::vec2>&& vertices, bool visible = true);
     ~RenderComponent();
 
     void render(TransformComponent transform);
@@ -19,7 +24,7 @@ class RenderComponent {
     std::vector<float> vertices() const;
 
     PlayerTestShaderProgram program_;
-    bool visible_ = true;
     GLuint vao_, vbo_;
     std::vector<glm::vec2> verts_;
+    bool visible_;
 };
