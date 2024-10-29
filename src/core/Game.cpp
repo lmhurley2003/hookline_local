@@ -11,6 +11,7 @@
 
 #include <glm/glm.hpp>
 
+#include "constants.hpp"
 #include "core/InputComponent.hpp"
 #include "core/RenderComponent.hpp"
 #include "core/TransformComponent.hpp"
@@ -71,19 +72,18 @@ void Game::update(float dt) {
     /* -- PLAYER INPUT & GRAPPLE -- */
     // TODO: Put input into a separate input component and handle this movement
     auto &inputs = registry.get<InputComponent>(player_.entity);
-    constexpr float force_amount = 30.0f;
     inputs.movement = {0.0f, 0.0f};
     if (player_.up.pressed) {
-        inputs.movement += glm::vec2{0.0f, force_amount};
+        inputs.movement += glm::vec2{0.0f, hookline::player_movement_force.y};
     }
     if (player_.down.pressed) {
-        inputs.movement += glm::vec2{0, -force_amount};
+        inputs.movement += glm::vec2{0, -hookline::player_movement_force.y};
     }
     if (player_.left.pressed) {
-        inputs.movement += glm::vec2{-force_amount, 0.0f};
+        inputs.movement += glm::vec2{-hookline::player_movement_force.x, 0.0f};
     }
     if (player_.right.pressed) {
-        inputs.movement += glm::vec2{force_amount, 0.0f};
+        inputs.movement += glm::vec2{hookline::player_movement_force.x, 0.0f};
     }
     // Grapple inputs - all manual stuff, fix later
     auto &player_transform = registry.get<TransformComponent>(player_.entity);

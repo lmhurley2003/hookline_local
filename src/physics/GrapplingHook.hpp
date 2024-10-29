@@ -4,12 +4,13 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
+#include "constants.hpp"
 #include "physics/util.hpp"
 
 struct GrapplingHookComponent {
-    static constexpr float max_length = 5.0f;
-    static constexpr float pull_force = 30.0f;
-    static constexpr float deactivate_dist = 0.01f;
+    static constexpr float max_length = hookline::grapple_max_length;
+    static constexpr float pull_force = hookline::grapple_pull_force;
+    static constexpr float deactivate_dist = hookline::grapple_deactive_dist;
 
     entt::entity self;
     entt::entity user;
