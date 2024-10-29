@@ -8,7 +8,7 @@
 
 constexpr glm::vec2 g_accel() { return {0.0f, hookline::g}; }
 void PhysicsSystem::update(float dt, entt::registry& registry) {
-    // Grappling hook update
+    /* Grappling hook physics */
     for (auto [_, grapple] : registry.view<GrapplingHookComponent>().each()) {
         if (grapple.attached) {
             auto [player_transform, player_forces] =
@@ -22,8 +22,7 @@ void PhysicsSystem::update(float dt, entt::registry& registry) {
             // Deactive grapple when close
             if (glm::distance(player_transform.position,
                               grapple.attached_position) <
-                grapple.deactivate_dist) {
-                std::cout << "Close to attachment point\n";
+                grapple.deactivate_distance) {
                 grapple.detach();
             }
         }

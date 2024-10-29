@@ -26,6 +26,6 @@ constexpr float drag = 2.0f;
 // Grapple
 constexpr float grapple_max_length = 15.0f;
 constexpr float grapple_pull_force = 15.0f;
-constexpr float grapple_deactive_dist = 0.01f;
+constexpr float grapple_deactive_distance = 0.01f;
 
 }  // namespace hookline
