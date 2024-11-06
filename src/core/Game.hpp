@@ -12,6 +12,7 @@
 #include <glm/glm.hpp>
 #include <physics/Components.hpp>
 
+#include "core/RenderSystem.hpp"
 #include "gameplay/CollectableSystem.hpp"
 #include "physics/CollisionSystem.hpp"
 #include "physics/PhysicsSystem.hpp"
@@ -45,7 +46,9 @@ class Game {
         } mouse;
     } player_;
     entt::entity grapple_entity;
+    entt::entity camera_entity;
 
+    RenderSystem rendering;
     PhysicsSystem physics;
     CollisionSystem collisions;
     CollectableSystem collectables;

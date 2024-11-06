@@ -12,6 +12,7 @@
 #include <glm/glm.hpp>
 
 #include "constants.hpp"
+#include "core/CameraComponent.hpp"
 #include "core/InputComponent.hpp"
 #include "core/RenderComponent.hpp"
 #include "core/TransformComponent.hpp"
@@ -37,6 +38,16 @@ Game::Game() {
         player_.entity = player;
     }
 
+    // Initialize camera
+    {
+        auto camera = registry.create();
+        registry.emplace<TransformComponent>(camera, glm::vec2{0.0f, 0.0f},
+                                             glm::vec2{1.0f, 1.0f}, 0.0f);
+        registry.emplace<CameraComponent>(camera, glm::vec2{0.0f, 0.0f},
+                                          100.0f);
+        camera_entity = camera;
+    }
+
     // Create a few immovable boxes somewhere
     {
         std::vector<glm::vec2> positions = {glm::vec2{0.5f, 0.5f},
@@ -59,8 +70,8 @@ Game::Game() {
     {
         auto box = registry.create();
         registry.emplace<TransformComponent>(
-            box,
-            TransformComponent(glm::vec2{0.0f, -0.95}, glm::vec2{4.0f, 0.05f}, 0.0f));
+            box, TransformComponent(glm::vec2{0.0f, -0.95},
+                                    glm::vec2{4.0f, 0.05f}, 0.0f));
         registry.emplace<RigidBodyComponent>(box);
         registry.emplace<ColliderComponent>(
             box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false));
@@ -146,12 +157,11 @@ void Game::render(glm::uvec2 drawable_size) {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    auto view = registry.view<TransformComponent, RenderComponent>();
-    for (auto entity : view) {
-        auto &transform = view.get<TransformComponent>(entity);
-        auto &renderable = view.get<RenderComponent>(entity);
-        renderable.render(transform);
-    }
+    // Update camera before rendering
+    CameraComponent &camera = registry.get<CameraComponent>(camera_entity);
+    camera.viewport_size = drawable_size;
+
+    rendering.render(drawable_size, registry);
 }
 
 bool Game::handle_event(SDL_Event const &event, glm::uvec2 drawable_size) {

@@ -131,8 +131,8 @@ void Application::run() {
         }
         if (quit_) break;
 
-        // (3) Fixed timestep update
-        // https://www.gafferongames.com/post/fix_your_timestep/
+            // (3) Fixed timestep update
+            // https://www.gafferongames.com/post/fix_your_timestep/
 #if 0
         while (accumulator >= hookline::fixed_dt) {
             game_->update(dt);
