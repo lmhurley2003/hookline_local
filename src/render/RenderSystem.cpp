@@ -1,17 +1,21 @@
 #include "RenderSystem.hpp"
 
+#include <chrono>
 #include <cstddef>
 #include <entt/entt.hpp>
 
 #include "core/TransformComponent.hpp"
 #include "render/CameraComponent.hpp"
 #include "render/RenderComponent.hpp"
+#include "shader/CyberpunkBackgroundShader.hpp"
+#include "util/misc.hpp"
 
 void RenderSystem::render(glm::uvec2 drawable_size, entt::registry &registry,
                           entt::entity camera_entity) {
-    (void)drawable_size;
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    render_background(drawable_size);
 
     // Update camera before rendering
     auto [camera_transform, camera] =
@@ -84,4 +88,44 @@ void RenderSystem::render(glm::uvec2 drawable_size, entt::registry &registry,
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
+}
+
+void RenderSystem::render_background(glm::uvec2 drawable_size) {
+    auto vertices = hookline::get_basic_shape_debug();
+    GLuint vao, vbo;
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+
+    // Vertex data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec2),
+                 vertices.data(), GL_STATIC_DRAW);
+
+    // Vertex attribute data
+    glBindVertexArray(vao);
+    glVertexAttribPointer(background_shader_.a_position_loc, 2, GL_FLOAT,
+                          GL_FALSE, sizeof(glm::vec2), (void *)0);
+    glEnableVertexAttribArray(background_shader_.a_position_loc);
+
+    // Use program
+    glUseProgram(background_shader_.program);
+
+    // Uniforms
+    // -- Fragment shader
+    using namespace std::chrono;
+    static auto start_time = high_resolution_clock::now();
+    auto time_diff =
+        duration_cast<milliseconds>(high_resolution_clock::now() - start_time);
+    float time = time_diff.count();
+    glUniform1f(background_shader_.u_time_loc, time);
+
+    glUniform2f(background_shader_.u_drawable_size_loc, (float)drawable_size.x,
+                (float)drawable_size.y);
+
+    // Draw
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
+
+    // Cleanup
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

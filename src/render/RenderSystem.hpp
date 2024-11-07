@@ -3,6 +3,8 @@
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
 
+#include "shader/CyberpunkBackgroundShader.hpp"
+
 /**
    The RenderSystem is very inefficient right now. It rebinds VAOs and VBOs for
    every single renderable every frame. Should fix at some point by just
@@ -14,4 +16,9 @@ class RenderSystem {
    public:
     void render(glm::uvec2 drawable_size, entt::registry &registry,
                 entt::entity camera);
+
+   private:
+    void render_background(glm::uvec2 drawable_size);
+
+    CyberpunkBackgroundShader background_shader_;
 };

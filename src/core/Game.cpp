@@ -152,9 +152,10 @@ void Game::update(float dt) {
     if (grapple.attached) {
         grapple_transform.position =
             (player_transform.position + grapple.attached_position) / 2.0f;
-        grapple_transform.scale = {
-            glm::distance(player_transform.position, grapple.attached_position),
-            0.01};
+        grapple_transform.scale = {glm::distance(player_transform.position,
+                                                 grapple.attached_position) /
+                                       2.0f,
+                                   0.01};
         glm::vec2 direction = glm::normalize(grapple.attached_position -
                                              player_transform.position);
         grapple_transform.rotation = -glm::atan(direction.y, direction.x);
