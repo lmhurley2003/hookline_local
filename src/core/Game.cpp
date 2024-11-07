@@ -16,6 +16,8 @@
 #include "constants.hpp"
 #include "core/InputComponent.hpp"
 #include "core/TransformComponent.hpp"
+#include "gameplay/HealthComponent.hpp"
+#include "gameplay/ProjectileSystem.hpp"
 #include "physics/Components.hpp"
 #include "physics/GrapplingHook.hpp"
 #include "physics/PhysicsSystem.hpp"
@@ -61,7 +63,7 @@ entt::entity maybe_hookable_box(entt::registry &registry, glm::vec2 position,
 }
 }  // namespace
 
-Game::Game() : collectables(&asset_manager) {
+Game::Game() : collectables(&asset_manager), projectileSystem(&asset_manager) {
     // Load assets
     // TODO: A game/level should read its required assets from some file and
     // load those as appropriate.
@@ -204,6 +206,8 @@ void Game::load_assets() {
     asset_manager.load_sound(
         "guitar_loop_music",
         hookline::data_path("../assets/sounds/guitar_loop_music.opus"));
+    asset_manager.load_sound(
+        "retro_hurt", hookline::data_path("../assets/sounds/retro_hurt.opus"));
 }
 
 void Game::setup_player() {

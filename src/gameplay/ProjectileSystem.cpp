@@ -3,6 +3,10 @@
 #include <cmath>
 #include <random>
 
+#include "core/TransformComponent.hpp"
+#include "gameplay/HealthComponent.hpp"
+#include "gameplay/ProjectileComponent.hpp"
+#include "render/RenderComponent.hpp"
 #include "util/misc.hpp"
 
 float getRandomFloat(float min = -3.0f, float max = 3.0f) {
@@ -69,6 +73,7 @@ void ProjectileSystem::update(float dt, entt::registry &registry,
                                 player_transform.position)) {
                 registry.destroy(entity);  // Destroy projectile on hit
                 player_health.take_damage(1);
+                Sound::play(asset_manager_->get_sound("retro_hurt"), 0.5f);
             }
             projectile.currtime += dt;
             if (projectile.currtime >= projectile.lifetime) {
