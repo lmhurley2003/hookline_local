@@ -77,6 +77,7 @@ bool raycast(glm::vec2 start, glm::vec2 direction, float max_length,
         if (line_intersects_rect(
                 start, start + direction * max_length, transform.position,
                 collider.size * transform.scale, hit_position) &&
+            collider.hookable &&
             std::find(ignore_list.begin(), ignore_list.end(), entity) ==
                 ignore_list.end()) {
             did_hit = true;

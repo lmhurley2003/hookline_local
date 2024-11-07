@@ -9,7 +9,9 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 
+#include <entt/entt.hpp>
 #include <glm/glm.hpp>
+#include <glm/gtc/random.hpp>
 
 #include "constants.hpp"
 #include "core/InputComponent.hpp"
@@ -23,92 +25,52 @@
 #include "render/RenderComponent.hpp"
 #include "util/misc.hpp"
 
+namespace {
+/**
+    Helper to make a manually defined box on the map.
+ */
+entt::entity hookable_box(entt::registry &registry, glm::vec2 position,
+                          glm::vec2 scale) {
+    auto box = registry.create();
+    registry.emplace<TransformComponent>(
+        box, TransformComponent(position, scale, 0.0f));
+    registry.emplace<RigidBodyComponent>(box);
+    registry.emplace<ColliderComponent>(
+        box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false, true));
+    registry.emplace<RenderComponent>(
+        box, RenderComponent::from_vertices_color(
+                 hookline::get_basic_shape_debug(), {0.07, 0.11, 0.23, 1.0}));
+    return box;
+}
+
+/**
+    Helper to make a manually defined not-hookable box on the map.
+ */
+entt::entity unhookable_box(entt::registry &registry, glm::vec2 position,
+                            glm::vec2 scale) {
+    auto box = registry.create();
+    registry.emplace<TransformComponent>(
+        box, TransformComponent(position, scale, 0.0f));
+    registry.emplace<RigidBodyComponent>(box);
+    registry.emplace<ColliderComponent>(
+        box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false, false));
+    registry.emplace<RenderComponent>(box,
+                                      RenderComponent::from_vertices_color(
+                                          hookline::get_basic_shape_debug()));
+    return box;
+}
+}  // namespace
+
 Game::Game() {
-    // Initialize player
-    {
-        auto player = registry.create();
-        registry.emplace<TransformComponent>(
-            player, TransformComponent(glm::vec2{0.0f, 0.0f},
-                                       glm::vec2{0.05f, 0.05f}, 0.0f));
-        registry.emplace<RigidBodyComponent>(player);
-        registry.emplace<ForceComponent>(player);
-        registry.emplace<ColliderComponent>(player, glm::vec2{1.0f, 1.0f});
-        registry.emplace<RenderComponent>(
-            player, RenderComponent::from_vertices_color(
-                        hookline::get_basic_shape_debug()));
-        registry.emplace<InputComponent>(player);
-        player_.entity = player;
-    }
+    // Player and attached camera setup
+    setup_player();
+    setup_camera();
 
-    // Initialize camera system and camera
-    camera_system = std::make_unique<CameraSystem>(player_.entity);
-    {
-        auto camera = registry.create();
-        registry.emplace<TransformComponent>(camera, glm::vec2{0.0f, 0.0f},
-                                             glm::vec2{1.0f, 1.0f}, 0.0f);
-        registry.emplace<CameraComponent>(camera, glm::vec2{0.0f, 0.0f},
-                                          400.0f);
-        camera_entity = camera;
-    }
-
-    // Create a few immovable boxes somewhere
-    {
-        std::vector<glm::vec2> positions = {glm::vec2{0.5f, 0.5f},
-                                            glm::vec2{-0.5f, 0.5f},
-                                            glm::vec2{-0.5f, -0.5f}};
-        for (const auto &position : positions) {
-            auto box = registry.create();
-            registry.emplace<TransformComponent>(
-                box,
-                TransformComponent(position, glm::vec2{0.05f, 0.05f}, 0.0f));
-            registry.emplace<RigidBodyComponent>(box);
-            registry.emplace<ColliderComponent>(
-                box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false));
-            registry.emplace<RenderComponent>(
-                box, RenderComponent::from_vertices_color(
-                         hookline::get_basic_shape_debug()));
-        }
-    }
-
-    // Create a ground
-    {
-        auto box = registry.create();
-        registry.emplace<TransformComponent>(
-            box, TransformComponent(glm::vec2{0.0f, -0.95},
-                                    glm::vec2{4.0f, 0.05f}, 0.0f));
-        registry.emplace<RigidBodyComponent>(box);
-        registry.emplace<ColliderComponent>(
-            box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false));
-        registry.emplace<RenderComponent>(
-            box, RenderComponent::from_vertices_color(
-                     hookline::get_basic_shape_debug()));
-    }
-
-    // Create grappling hook
-    {
-        grapple_entity = registry.create();
-        registry.emplace<TransformComponent>(
-            grapple_entity, TransformComponent(glm::vec2(0.0f, 0.0f),
-                                               glm::vec2{0.05f, 0.05f}, 0.0f));
-        registry.emplace<GrapplingHookComponent>(grapple_entity, grapple_entity,
-                                                 player_.entity);
-        registry.emplace<RenderComponent>(
-            grapple_entity, RenderComponent::from_vertices_color(
-                                hookline::get_basic_shape_debug()));
-    }
-
-    // Spawn some collectables for demo
-    {
-        collectables.spawn_random(registry);
-        collectables.spawn_random(registry);
-        collectables.spawn_random(registry);
-    }
+    // All hookable platforms, ground, and collectables
+    setup_map();
 }
 
 void Game::update(float dt) {
-    (void)dt;
-    // Input
-
     /* -- PLAYER INPUT & GRAPPLE -- */
     // TODO: Put input into a separate input component and handle this movement
     auto &inputs = registry.get<InputComponent>(player_.entity);
@@ -215,4 +177,73 @@ bool Game::handle_event(SDL_Event const &event, glm::uvec2 drawable_size) {
         }
     }
     return false;
+}
+
+void Game::setup_player() {
+    auto player = registry.create();
+    registry.emplace<TransformComponent>(
+        player, TransformComponent(glm::vec2{0.0f, 0.0f},
+                                   glm::vec2{0.05f, 0.05f}, 0.0f));
+    registry.emplace<RigidBodyComponent>(player);
+    registry.emplace<ForceComponent>(player);
+    registry.emplace<ColliderComponent>(player, glm::vec2{1.0f, 1.0f}, true,
+                                        true, false);
+    registry.emplace<RenderComponent>(player,
+                                      RenderComponent::from_vertices_color(
+                                          hookline::get_basic_shape_debug()));
+    registry.emplace<InputComponent>(player);
+    player_.entity = player;
+}
+
+void Game::setup_camera() {
+    camera_system = std::make_unique<CameraSystem>(player_.entity);
+    auto camera = registry.create();
+    registry.emplace<TransformComponent>(camera, glm::vec2{0.0f, 0.0f},
+                                         glm::vec2{1.0f, 1.0f}, 0.0f);
+    registry.emplace<CameraComponent>(camera, glm::vec2{0.0f, 0.0f},
+                                      hookline::pixels_per_unit);
+    camera_entity = camera;
+}
+
+void Game::setup_map() {
+    glm::vec2 bottom_left = {-2.0f, -1.0f};
+    glm::vec2 top_right = {2.0f, 3.0f};
+
+    srand(time(nullptr));
+
+    // Create a few immovable boxes somewhere
+    {
+        for (size_t i = 0; i < 10; ++i) {
+            glm::vec2 position = glm::linearRand(bottom_left, top_right);
+            hookable_box(registry, position, glm::vec2{0.05f, 0.05f});
+        }
+    }
+
+    // Create a ground, side walls, and ceiling
+    {
+        unhookable_box(registry, {0, -3.1f}, {3.0f, 0.05f});
+        unhookable_box(registry, {-3.0f, 0.0f}, {0.05f, 3.0f});
+        unhookable_box(registry, {3.0f, 0.0f}, {0.05f, 3.0f});
+        unhookable_box(registry, {0, 3.1f}, {3.0f, 0.05f});
+    }
+
+    // Create grappling hook
+    {
+        grapple_entity = registry.create();
+        registry.emplace<TransformComponent>(
+            grapple_entity, TransformComponent(glm::vec2(0.0f, 0.0f),
+                                               glm::vec2{0.05f, 0.05f}, 0.0f));
+        registry.emplace<GrapplingHookComponent>(grapple_entity, grapple_entity,
+                                                 player_.entity);
+        registry.emplace<RenderComponent>(
+            grapple_entity, RenderComponent::from_vertices_color(
+                                hookline::get_basic_shape_debug()));
+    }
+
+    // Spawn some collectables for demo
+    {
+        collectables.spawn_random(registry);
+        collectables.spawn_random(registry);
+        collectables.spawn_random(registry);
+    }
 }

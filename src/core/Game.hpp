@@ -55,4 +55,9 @@ class Game {
     CollisionSystem collisions;
     CollectableSystem collectables;
     entt::registry registry;
+
+   private:
+    void setup_player();
+    void setup_camera();
+    void setup_map();
 };
