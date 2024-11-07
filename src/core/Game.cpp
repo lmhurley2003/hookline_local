@@ -44,16 +44,16 @@ entt::entity hookable_box(entt::registry &registry, glm::vec2 position,
 }
 
 /**
-    Helper to make a manually defined not-hookable box on the map.
+    Helper to make a manually defined maybe-hookable box on the map.
  */
-entt::entity unhookable_box(entt::registry &registry, glm::vec2 position,
-                            glm::vec2 scale) {
+entt::entity maybe_hookable_box(entt::registry &registry, glm::vec2 position,
+                                glm::vec2 scale, bool hookable = false) {
     auto box = registry.create();
     registry.emplace<TransformComponent>(
         box, TransformComponent(position, scale, 0.0f));
     registry.emplace<RigidBodyComponent>(box);
     registry.emplace<ColliderComponent>(
-        box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false, false));
+        box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false, hookable));
     registry.emplace<RenderComponent>(box,
                                       RenderComponent::from_vertices_color(
                                           hookline::get_basic_shape_debug()));
@@ -131,6 +131,7 @@ void Game::update(float dt) {
 }
 
 void Game::render(glm::uvec2 drawable_size) {
+    // Render scene
     rendering.render(drawable_size, registry, camera_entity);
 }
 
@@ -221,10 +222,10 @@ void Game::setup_map() {
 
     // Create a ground, side walls, and ceiling
     {
-        unhookable_box(registry, {0, -3.1f}, {3.0f, 0.05f});
-        unhookable_box(registry, {-3.0f, 0.0f}, {0.05f, 3.0f});
-        unhookable_box(registry, {3.0f, 0.0f}, {0.05f, 3.0f});
-        unhookable_box(registry, {0, 3.1f}, {3.0f, 0.05f});
+        maybe_hookable_box(registry, {0, -3.1f}, {3.0f, 0.05f});
+        maybe_hookable_box(registry, {-3.0f, 0.0f}, {0.05f, 3.0f});
+        maybe_hookable_box(registry, {3.0f, 0.0f}, {0.05f, 3.0f});
+        maybe_hookable_box(registry, {0, 3.1f}, {3.0f, 0.05f});
     }
 
     // Create grappling hook
