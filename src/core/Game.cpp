@@ -122,12 +122,21 @@ void Game::update(float dt) {
                                              player_transform.position);
         grapple_transform.rotation = -glm::atan(direction.y, direction.x);
     }
+    auto &health = registry.get<HealthComponent>(player_.entity);
+        if (health.health <= 0) {
+                registry.remove<RigidBodyComponent>(player_.entity);
+                registry.remove<RenderComponent>(player_.entity);
+            if (registry.all_of<ColliderComponent>(player_.entity)) {
+                registry.remove<ColliderComponent>(player_.entity);
+            }
+    }
 
     // System updates
     physics.update(dt, registry);
     collisions.update(dt, registry);
     camera_system->update(dt, registry);
     collectables.update(dt, registry, player_.entity);
+    projectileSystem.update(dt, registry, player_.entity);
 }
 
 void Game::render(glm::uvec2 drawable_size) {
@@ -193,6 +202,7 @@ void Game::setup_player() {
                                       RenderComponent::from_vertices_color(
                                           hookline::get_basic_shape_debug()));
     registry.emplace<InputComponent>(player);
+    registry.emplace<HealthComponent>(player, 5);
     player_.entity = player;
 }
 
@@ -214,7 +224,7 @@ void Game::setup_map() {
 
     // Create a few immovable boxes somewhere
     {
-        for (size_t i = 0; i < 10; ++i) {
+        for (size_t i = 0; i < 20; ++i) {
             glm::vec2 position = glm::linearRand(bottom_left, top_right);
             hookable_box(registry, position, glm::vec2{0.05f, 0.05f});
         }

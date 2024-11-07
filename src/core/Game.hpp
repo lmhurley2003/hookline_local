@@ -13,6 +13,7 @@
 #include <physics/Components.hpp>
 
 #include "gameplay/CollectableSystem.hpp"
+#include "gameplay/ProjectileSystem.hpp"
 #include "physics/CollisionSystem.hpp"
 #include "physics/PhysicsSystem.hpp"
 #include "render/CameraSystem.hpp"
@@ -54,6 +55,7 @@ class Game {
     PhysicsSystem physics;
     CollisionSystem collisions;
     CollectableSystem collectables;
+    ProjectileSystem projectileSystem;
     entt::registry registry;
 
    private:
