@@ -18,18 +18,18 @@ void ProjectileSystem::update(float dt, entt::registry &registry,
     auto &player_health = registry.get<HealthComponent>(player);
 
     timer_h += dt;
-    if (timer_h >= 5) {
+    if (timer_h >= 4) {
         timer_h = 0;
         spawn_horizontal_projectile(true, getRandomFloat(), registry);
     }
     timer_c += dt;
-    if (timer_c >= 4) {
+    if (timer_c >= 5) {
         timer_c = 0;
         spawn_chasing_projectile(glm::vec2(getRandomFloat(-1.0f, 1.0f), 1.0f),
                                  registry);
     }
     timer_s += dt;
-    if (timer_s >= 3) {
+    if (timer_s >= 9) {
         timer_s = 0;
         float height_ = getRandomFloat();
         if (std::abs(height_ - player_transform.position.y) < 0.2f) {
@@ -84,23 +84,27 @@ void ProjectileSystem::spawn_horizontal_projectile(bool from_left, float height,
         from_left ? glm::vec2{-3.0f, height} : glm::vec2{3.0f, height};
     glm::vec2 direction =
         from_left ? glm::vec2{1.0f, 0.0f} : glm::vec2{-1.0f, 0.0f};
-    registry.emplace<TransformComponent>(projectile, position);
+    registry.emplace<TransformComponent>(projectile, position,
+                                         glm::vec2{0.025f, 0.025f});
     registry.emplace<ProjectileComponent>(
         projectile, ProjectileType::Horizontal, direction, 0.5f, 100.0f);
-    registry.emplace<RenderComponent>(projectile,
-                                      RenderComponent::from_vertices_color(
-                                          hookline::get_basic_shape_debug()));
+    registry.emplace<RenderComponent>(
+        projectile,
+        RenderComponent::from_vertices_color(hookline::get_basic_shape_debug(),
+                                             {0.74, 0.08, 0.14, 1.0}));
 }
 
 void ProjectileSystem::spawn_chasing_projectile(glm::vec2 origin,
                                                 entt::registry &registry) {
     auto projectile = registry.create();
-    registry.emplace<TransformComponent>(projectile, origin);
+    registry.emplace<TransformComponent>(projectile, origin,
+                                         glm::vec2{0.025f, 0.025f});
     registry.emplace<ProjectileComponent>(projectile, ProjectileType::Chasing,
                                           glm::vec2{0.0f, 1.0f}, 0.4f, 10.0f);
-    registry.emplace<RenderComponent>(projectile,
-                                      RenderComponent::from_vertices_color(
-                                          hookline::get_basic_shape_debug()));
+    registry.emplace<RenderComponent>(
+        projectile,
+        RenderComponent::from_vertices_color(hookline::get_basic_shape_debug(),
+                                             {0.74, 0.08, 0.14, 1.0}));
 }
 
 void ProjectileSystem::spawn_spray_projectile(glm::vec2 origin,
@@ -110,12 +114,14 @@ void ProjectileSystem::spawn_spray_projectile(glm::vec2 origin,
             glm::radians(i * 60.0f);  // 60-degree increments for six directions
         glm::vec2 direction = glm::vec2(cos(angle), sin(angle));
         auto projectile = registry.create();
-        registry.emplace<TransformComponent>(projectile, origin);
+        registry.emplace<TransformComponent>(projectile, origin,
+                                             glm::vec2{0.025f, 0.025f});
         registry.emplace<ProjectileComponent>(projectile, ProjectileType::Spray,
                                               direction, 0.6f, 10.0f);
         registry.emplace<RenderComponent>(
-            projectile, RenderComponent::from_vertices_color(
-                            hookline::get_basic_shape_debug()));
+            projectile,
+            RenderComponent::from_vertices_color(
+                hookline::get_basic_shape_debug(), {0.74, 0.08, 0.14, 1.0}));
     }
 }
 
