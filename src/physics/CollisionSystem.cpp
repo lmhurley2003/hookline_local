@@ -8,9 +8,9 @@ bool check_collision_aabb(const TransformComponent &transform1,
                           const ColliderComponent &collider1,
                           const TransformComponent &transform2,
                           const ColliderComponent &collider2) {
-    // Assuming collider size is the full size, get half
-    glm::vec2 half1 = collider1.size * transform1.scale * 0.5f;
-    glm::vec2 half2 = collider2.size * transform2.scale * 0.5f;
+    // Assume collider.size is a half size in local coordinates
+    glm::vec2 half1 = collider1.size * transform1.scale;
+    glm::vec2 half2 = collider2.size * transform2.scale;
 
     // Calculate AABB min and max positions
     glm::vec2 min1 = transform1.position - half1;
@@ -59,8 +59,8 @@ void CollisionSystem::handle_collision(entt::entity entity1,
     auto &rigid_body2 = registry.get<RigidBodyComponent>(entity2);
 
     glm::vec2 delta = transform2.position - transform1.position;
-    glm::vec2 overlap = (collider1.size * transform1.scale * 0.5f +
-                         collider2.size * transform2.scale * 0.5f) -
+    glm::vec2 overlap = (collider1.size * transform1.scale +
+                         collider2.size * transform2.scale) -
                         glm::abs(delta);
 
     if (!collider1.can_move && !collider2.can_move) {

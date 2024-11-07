@@ -60,7 +60,7 @@ Game::Game() {
             auto box = registry.create();
             registry.emplace<TransformComponent>(
                 box,
-                TransformComponent(position, glm::vec2{0.10f, 0.10f}, 0.0f));
+                TransformComponent(position, glm::vec2{0.05f, 0.05f}, 0.0f));
             registry.emplace<RigidBodyComponent>(box);
             registry.emplace<ColliderComponent>(
                 box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false));
