@@ -18,10 +18,10 @@ bool point_in_rect(glm::vec2 point, glm::vec2 rect_position,
 bool line_intersects_rect(glm::vec2 start, glm::vec2 end,
                           glm::vec2 rect_position, glm::vec2 rect_size,
                           glm::vec2* hit_position) {
-    float left = rect_position.x - rect_size.x / 2;
-    float right = rect_position.x + rect_size.x / 2;
-    float top = rect_position.y + rect_size.y / 2;
-    float bottom = rect_position.y - rect_size.y / 2;
+    float left = rect_position.x - rect_size.x;
+    float right = rect_position.x + rect_size.x;
+    float top = rect_position.y + rect_size.y;
+    float bottom = rect_position.y - rect_size.y;
 
     // Short Circuit - Line is completely to one side of rectangle
     if (start.x <= left && end.x <= left) return false;

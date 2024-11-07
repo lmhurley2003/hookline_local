@@ -1,7 +1,5 @@
 #include "GrapplingHook.hpp"
 
-#include <iostream>
-
 #include "physics/util.hpp"
 
 void GrapplingHookComponent::try_attach(glm::vec2 start_position,
