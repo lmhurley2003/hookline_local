@@ -16,6 +16,7 @@
 #include "core/InputComponent.hpp"
 #include "core/RenderComponent.hpp"
 #include "core/TransformComponent.hpp"
+#include "gameplay/CameraSystem.hpp"
 #include "physics/Components.hpp"
 #include "physics/GrapplingHook.hpp"
 #include "physics/PhysicsSystem.hpp"
@@ -38,13 +39,14 @@ Game::Game() {
         player_.entity = player;
     }
 
-    // Initialize camera
+    // Initialize camera system and camera
+    camera_system = std::make_unique<CameraSystem>(player_.entity);
     {
         auto camera = registry.create();
         registry.emplace<TransformComponent>(camera, glm::vec2{0.0f, 0.0f},
                                              glm::vec2{1.0f, 1.0f}, 0.0f);
         registry.emplace<CameraComponent>(camera, glm::vec2{0.0f, 0.0f},
-                                          100.0f);
+                                          400.0f);
         camera_entity = camera;
     }
 
@@ -126,8 +128,16 @@ void Game::update(float dt) {
             .get<TransformComponent, RenderComponent, GrapplingHookComponent>(
                 grapple_entity);
     grapple_transform.position = player_transform.position;
+
+    // Convert mouse click position to world position
+    auto [camera_transform, camera] =
+        registry.get<TransformComponent, CameraComponent>(camera_entity);
+    glm::vec2 target_world_position = hookline::convert_opengl_mouse_to_world(
+        player_.mouse.position, camera_transform.position, camera.viewport_size,
+        camera.pixels_per_unit);
+
     if (player_.mouse.pressed) {
-        grapple.try_attach(player_transform.position, player_.mouse.position,
+        grapple.try_attach(player_transform.position, target_world_position,
                            registry);
     }
     if (!player_.mouse.pressed) {
@@ -149,19 +159,12 @@ void Game::update(float dt) {
     // System updates
     physics.update(dt, registry);
     collisions.update(dt, registry);
+    camera_system->update(dt, registry);
     collectables.update(dt, registry, player_.entity);
 }
 
 void Game::render(glm::uvec2 drawable_size) {
-    (void)drawable_size;
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // Update camera before rendering
-    CameraComponent &camera = registry.get<CameraComponent>(camera_entity);
-    camera.viewport_size = drawable_size;
-
-    rendering.render(drawable_size, registry);
+    rendering.render(drawable_size, registry, camera_entity);
 }
 
 bool Game::handle_event(SDL_Event const &event, glm::uvec2 drawable_size) {

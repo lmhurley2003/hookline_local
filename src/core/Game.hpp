@@ -13,6 +13,7 @@
 #include <physics/Components.hpp>
 
 #include "core/RenderSystem.hpp"
+#include "gameplay/CameraSystem.hpp"
 #include "gameplay/CollectableSystem.hpp"
 #include "physics/CollisionSystem.hpp"
 #include "physics/PhysicsSystem.hpp"
@@ -49,6 +50,7 @@ class Game {
     entt::entity camera_entity;
 
     RenderSystem rendering;
+    std::unique_ptr<CameraSystem> camera_system;
     PhysicsSystem physics;
     CollisionSystem collisions;
     CollectableSystem collectables;

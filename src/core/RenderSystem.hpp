@@ -5,5 +5,6 @@
 
 class RenderSystem {
    public:
-    void render(glm::uvec2 drawable_size, const entt::registry &registry);
+    void render(glm::uvec2 drawable_size, entt::registry &registry,
+                entt::entity camera);
 };

@@ -98,4 +98,12 @@ glm::vec2 convert_mouse_to_opengl(int x, int y, glm::uvec2 drawable_size) {
     return result;
 }
 
+glm::vec2 convert_opengl_mouse_to_world(glm::vec2 opengl_position,
+                                        glm::vec2 camera_position,
+                                        glm::vec2 camera_viewport_size,
+                                        float pixels_per_unit) {
+    return opengl_position * (camera_viewport_size / 2.0f) / pixels_per_unit +
+           camera_position;
+}
+
 }  // namespace hookline

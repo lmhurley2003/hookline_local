@@ -30,4 +30,9 @@ bool raycast(glm::vec2 start, glm::vec2 direction, float max_length,
 
 glm::vec2 convert_mouse_to_opengl(int x, int y, glm::uvec2 drawable_size);
 
+glm::vec2 convert_opengl_mouse_to_world(glm::vec2 opengl_position,
+                                        glm::vec2 camera_position,
+                                        glm::vec2 camera_viewport_size,
+                                        float pixels_per_unit);
+
 }  // namespace hookline
