@@ -17,6 +17,7 @@ constexpr int minimum_window_height = 100;
 constexpr float fixed_dt = 1.0f / 60.0f;
 
 constexpr float pixels_per_unit = 400.0f;
+constexpr float camera_player_vertical_offset = 0.5;
 
 // Physics
 constexpr glm::vec2 min_velocity = {0.05, 0.05};

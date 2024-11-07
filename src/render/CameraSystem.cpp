@@ -2,6 +2,7 @@
 
 #include <entt/entt.hpp>
 
+#include "constants.hpp"
 #include "core/TransformComponent.hpp"
 #include "render/CameraComponent.hpp"
 
@@ -15,6 +16,8 @@ void CameraSystem::update(float dt, entt::registry &registry) {
     /* Make camera(s) follow player */
     for (auto [_, camera_transform, camera] :
          registry.view<TransformComponent, CameraComponent>().each()) {
-        camera_transform.position = player_transform.position;
+        camera_transform.position =
+            player_transform.position +
+            glm::vec2{0, hookline::camera_player_vertical_offset};
     }
 }
