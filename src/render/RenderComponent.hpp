@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "render/Vertex.hpp"
-#include "shader/PlayerTestShaderProgram.hpp"
+#include "shader/BasicMeshShader.hpp"
 
 /**
  * RenderComponent holding rendering data like a shader progrma, vertices, etc.
@@ -40,7 +40,7 @@ class RenderComponent {
 
     void set_visible(bool visible);
 
-    PlayerTestShaderProgram program_;
+    BasicMeshShader program_;
     GLuint vao_ = 0;  // owning
     GLuint vbo_ = 0;  // owning
     std::vector<Vertex> verts_;

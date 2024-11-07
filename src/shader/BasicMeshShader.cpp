@@ -1,8 +1,8 @@
-#include "PlayerTestShaderProgram.hpp"
+#include "BasicMeshShader.hpp"
 
 #include "util/gl_compile_program.hpp"
 
-PlayerTestShaderProgram::PlayerTestShaderProgram() {
+BasicMeshShader::BasicMeshShader() {
     glCreateShader(GL_VERTEX_SHADER);
     program = gl_compile_program(
         // vertex shader
@@ -65,12 +65,9 @@ PlayerTestShaderProgram::PlayerTestShaderProgram() {
         glGetUniformLocation(program, "u_frag_use_texture");
 }
 
-PlayerTestShaderProgram::~PlayerTestShaderProgram() {
-    glDeleteProgram(program);
-}
+BasicMeshShader::~BasicMeshShader() { glDeleteProgram(program); }
 
-PlayerTestShaderProgram::PlayerTestShaderProgram(
-    PlayerTestShaderProgram&& other) noexcept
+BasicMeshShader::BasicMeshShader(BasicMeshShader&& other) noexcept
     : program(other.program),
       a_position_loc(other.a_position_loc),
       a_texture_coord_loc(other.a_texture_coord_loc),
@@ -86,8 +83,7 @@ PlayerTestShaderProgram::PlayerTestShaderProgram(
     other.program = 0;
 }
 
-PlayerTestShaderProgram& PlayerTestShaderProgram::operator=(
-    PlayerTestShaderProgram&& other) noexcept {
+BasicMeshShader& BasicMeshShader::operator=(BasicMeshShader&& other) noexcept {
     if (this == &other) {
         return *this;
     }

@@ -1,27 +1,24 @@
 /**
- * @file PlayerTestShaderProgram.hpp
+ * @file BasicMeshShader.hpp
  *
- * Temporary GL shader program for a basic character for demo (just a black
- * square right now). Change Header only for simplicity.
+ * GL Shader program for 2D meshes with per-vertex color, or a single texture.
  */
 
 #pragma once
 
 #include <GL/glew.h>
 
-struct PlayerTestShaderProgram {
-    PlayerTestShaderProgram();
-    ~PlayerTestShaderProgram();
+struct BasicMeshShader {
+    BasicMeshShader();
+    ~BasicMeshShader();
 
     // Cannot copy a shader program
-    PlayerTestShaderProgram(const PlayerTestShaderProgram& other) = delete;
-    PlayerTestShaderProgram& operator=(const PlayerTestShaderProgram& other) =
-        delete;
+    BasicMeshShader(const BasicMeshShader& other) = delete;
+    BasicMeshShader& operator=(const BasicMeshShader& other) = delete;
 
-    PlayerTestShaderProgram(PlayerTestShaderProgram&& other) noexcept;
+    BasicMeshShader(BasicMeshShader&& other) noexcept;
 
-    PlayerTestShaderProgram& operator=(
-        PlayerTestShaderProgram&& other) noexcept;
+    BasicMeshShader& operator=(BasicMeshShader&& other) noexcept;
 
     GLuint program = 0;
 
