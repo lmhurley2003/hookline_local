@@ -131,12 +131,12 @@ void Game::update(float dt) {
         grapple_transform.rotation = -glm::atan(direction.y, direction.x);
     }
     auto &health = registry.get<HealthComponent>(player_.entity);
-        if (health.health <= 0) {
-                registry.remove<RigidBodyComponent>(player_.entity);
-                registry.remove<RenderComponent>(player_.entity);
-            if (registry.all_of<ColliderComponent>(player_.entity)) {
-                registry.remove<ColliderComponent>(player_.entity);
-            }
+    if (health.health <= 0) {
+        registry.remove<RigidBodyComponent>(player_.entity);
+        registry.remove<RenderComponent>(player_.entity);
+        if (registry.all_of<ColliderComponent>(player_.entity)) {
+            registry.remove<ColliderComponent>(player_.entity);
+        }
     }
 
     // System updates
