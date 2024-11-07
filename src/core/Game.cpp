@@ -202,7 +202,7 @@ void Game::setup_player() {
                                       RenderComponent::from_vertices_color(
                                           hookline::get_basic_shape_debug()));
     registry.emplace<InputComponent>(player);
-    registry.emplace<HealthComponent>(player, 5);
+    registry.emplace<HealthComponent>(player, 6);
     player_.entity = player;
 }
 
