@@ -33,8 +33,9 @@ Game::Game() {
         registry.emplace<RigidBodyComponent>(player);
         registry.emplace<ForceComponent>(player);
         registry.emplace<ColliderComponent>(player, glm::vec2{1.0f, 1.0f});
-        registry.emplace<RenderComponent>(player,
-                                          hookline::get_basic_shape_debug());
+        registry.emplace<RenderComponent>(
+            player, RenderComponent::from_vertices_color(
+                        hookline::get_basic_shape_debug()));
         registry.emplace<InputComponent>(player);
         player_.entity = player;
     }
@@ -64,7 +65,8 @@ Game::Game() {
             registry.emplace<ColliderComponent>(
                 box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false));
             registry.emplace<RenderComponent>(
-                box, hookline::get_basic_shape_debug(), true);
+                box, RenderComponent::from_vertices_color(
+                         hookline::get_basic_shape_debug()));
         }
     }
 
@@ -78,7 +80,8 @@ Game::Game() {
         registry.emplace<ColliderComponent>(
             box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false));
         registry.emplace<RenderComponent>(
-            box, hookline::get_basic_shape_debug(), true);
+            box, RenderComponent::from_vertices_color(
+                     hookline::get_basic_shape_debug()));
     }
 
     // Create grappling hook
@@ -89,8 +92,9 @@ Game::Game() {
                                                glm::vec2{0.05f, 0.05f}, 0.0f));
         registry.emplace<GrapplingHookComponent>(grapple_entity, grapple_entity,
                                                  player_.entity);
-        registry.emplace<RenderComponent>(grapple_entity,
-                                          hookline::get_basic_shape_debug());
+        registry.emplace<RenderComponent>(
+            grapple_entity, RenderComponent::from_vertices_color(
+                                hookline::get_basic_shape_debug()));
     }
 
     // Spawn some collectables for demo

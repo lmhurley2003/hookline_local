@@ -33,7 +33,8 @@ void CollectableSystem::spawn(entt::registry &registry, glm::vec2 position) {
         TransformComponent(position, glm::vec2{0.025f, 0.025f}, 0.0f));
     registry.emplace<CollectableComponent>(collectable);
     registry.emplace<RenderComponent>(collectable,
-                                      hookline::get_basic_shape_debug());
+                                      RenderComponent::from_vertices_color(
+                                          hookline::get_basic_shape_debug()));
 
     std::cout << "Spawning collectable " << static_cast<uint32_t>(collectable)
               << " with position " << "(" << position.x << ", " << position.y
