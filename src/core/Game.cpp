@@ -206,7 +206,7 @@ void Game::setup_camera() {
 }
 
 void Game::setup_map() {
-    glm::vec2 bottom_left = {-2.0f, -1.0f};
+    glm::vec2 bottom_left = {-2.0f, -2.0f};
     glm::vec2 top_right = {2.0f, 3.0f};
 
     srand(time(nullptr));
@@ -240,10 +240,10 @@ void Game::setup_map() {
                                 hookline::get_basic_shape_debug()));
     }
 
-    // Spawn some collectables for demo
+    // Spawn some collectables
     {
-        collectables.spawn_random(registry);
-        collectables.spawn_random(registry);
-        collectables.spawn_random(registry);
+        for (size_t i = 0; i < 20; ++i) {
+            collectables.spawn_random(registry);
+        }
     }
 }
