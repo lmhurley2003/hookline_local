@@ -33,7 +33,7 @@ bool Application::init() {
     window_ = SDL_CreateWindow(
         "Hookline", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         hookline::default_window_width, hookline::default_window_height,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
+        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_SetWindowMinimumSize(window_, hookline::minimum_window_width,
                              hookline::minimum_window_height);
 
@@ -89,15 +89,13 @@ void Application::run() {
     glm::uvec2 drawable_size;  // size of drawable (physical pixels)
     // On non-highDPI displays, window_size will always equal drawable_size.
 
-    // For now, no resize
-    SDL_SetWindowResizable(window_, SDL_FALSE);
     auto on_resize = [&]() {
         int w, h;
         SDL_GetWindowSize(window_, &w, &h);
-        window_size = glm::uvec2(h, h);
+        window_size = glm::uvec2(w, h);
         SDL_GL_GetDrawableSize(window_, &w, &h);
-        drawable_size = glm::uvec2(h, h);
-        glViewport(0, 0, drawable_size.y, drawable_size.y);
+        drawable_size = glm::uvec2(w, h);
+        glViewport(0, 0, drawable_size.x, drawable_size.y);
     };
     on_resize();
 
