@@ -2,9 +2,9 @@
 
 #include <entt/entt.hpp>
 
-#include "core/CameraComponent.hpp"
-#include "core/RenderComponent.hpp"
 #include "core/TransformComponent.hpp"
+#include "render/CameraComponent.hpp"
+#include "render/RenderComponent.hpp"
 
 void RenderSystem::render(glm::uvec2 drawable_size, entt::registry &registry,
                           entt::entity camera_entity) {

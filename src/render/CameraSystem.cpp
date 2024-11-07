@@ -2,8 +2,8 @@
 
 #include <entt/entt.hpp>
 
-#include "core/CameraComponent.hpp"
 #include "core/TransformComponent.hpp"
+#include "render/CameraComponent.hpp"
 
 CameraSystem::CameraSystem(entt::entity &player_entity)
     : player_entity_(player_entity) {}

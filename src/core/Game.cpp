@@ -12,15 +12,15 @@
 #include <glm/glm.hpp>
 
 #include "constants.hpp"
-#include "core/CameraComponent.hpp"
 #include "core/InputComponent.hpp"
-#include "core/RenderComponent.hpp"
 #include "core/TransformComponent.hpp"
-#include "gameplay/CameraSystem.hpp"
 #include "physics/Components.hpp"
 #include "physics/GrapplingHook.hpp"
 #include "physics/PhysicsSystem.hpp"
 #include "physics/util.hpp"
+#include "render/CameraComponent.hpp"
+#include "render/CameraSystem.hpp"
+#include "render/RenderComponent.hpp"
 #include "util/misc.hpp"
 
 Game::Game() {

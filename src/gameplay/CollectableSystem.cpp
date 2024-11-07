@@ -6,8 +6,8 @@
 #include <iostream>
 
 #include "CollectableComponent.hpp"
-#include "core/RenderComponent.hpp"
 #include "core/TransformComponent.hpp"
+#include "render/RenderComponent.hpp"
 #include "util/misc.hpp"
 
 void CollectableSystem::update(float dt, entt::registry &registry,

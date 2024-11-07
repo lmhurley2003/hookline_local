@@ -12,11 +12,11 @@
 #include <glm/glm.hpp>
 #include <physics/Components.hpp>
 
-#include "core/RenderSystem.hpp"
-#include "gameplay/CameraSystem.hpp"
 #include "gameplay/CollectableSystem.hpp"
 #include "physics/CollisionSystem.hpp"
 #include "physics/PhysicsSystem.hpp"
+#include "render/CameraSystem.hpp"
+#include "render/RenderSystem.hpp"
 
 /**
  * Main Game class
