@@ -7,12 +7,12 @@
 #include "core/TransformComponent.hpp"
 #include "render/CameraComponent.hpp"
 #include "render/RenderComponent.hpp"
-#include "shader/CyberpunkBackgroundShader.hpp"
+#include "shader/CyberpunkBackgroundShaderNew.hpp"
 #include "util/misc.hpp"
 
 void RenderSystem::render(glm::uvec2 drawable_size, entt::registry &registry,
                           entt::entity camera_entity) {
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     render_background(drawable_size);

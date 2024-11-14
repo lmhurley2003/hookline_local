@@ -19,6 +19,26 @@ RenderComponent RenderComponent::from_vertices_color(
 }
 
 /**
+ * Make a new RenderComponent using vertices and a (default) color.
+ */
+RenderComponent RenderComponent::grapple_from_vertices_color(
+    const std::vector<glm::vec2>& vertices, 
+    const std::vector<glm::vec2>& tex_coords,
+    glm::vec4 color) {
+    RenderComponent result;
+    for (size_t i = 0; i < vertices.size(); ++i) {
+        Vertex vertex = {vertices[i], tex_coords[i], {0.0f, 0.0f, 0.0f, 1.0f}};
+        result.verts_.push_back(vertex);
+    }
+    result.visible_ = true;
+    result.use_texture_ = false;
+
+    result.setup();
+
+    return result;
+}
+
+/**
  * Make a new RenderComponent using vertices and a texture;
  */
 RenderComponent RenderComponent::from_vertices_texture(

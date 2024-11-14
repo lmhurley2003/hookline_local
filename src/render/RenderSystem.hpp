@@ -3,7 +3,7 @@
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
 
-#include "shader/CyberpunkBackgroundShader.hpp"
+#include "shader/CyberpunkBackgroundShaderNew.hpp"
 
 /**
    The RenderSystem is very inefficient right now. It rebinds VAOs and VBOs for
@@ -20,5 +20,5 @@ class RenderSystem {
    private:
     void render_background(glm::uvec2 drawable_size);
 
-    CyberpunkBackgroundShader background_shader_;
+    CyberpunkBackgroundShaderNew background_shader_;
 };

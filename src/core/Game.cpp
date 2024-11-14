@@ -40,8 +40,8 @@ entt::entity hookable_box(entt::registry &registry, glm::vec2 position,
     registry.emplace<ColliderComponent>(
         box, ColliderComponent(glm::vec2{1.0f, 1.0f}, true, false, true));
     registry.emplace<RenderComponent>(
-        box, RenderComponent::from_vertices_color(
-                 hookline::get_basic_shape_debug(), {0.07, 0.11, 0.23, 1.0}));
+        box, RenderComponent::grapple_from_vertices_color(
+                 hookline::get_basic_shape_debug(), hookline::get_corner_coords(), {0.07, 0.11, 0.23, 1.0}));
     return box;
 }
 
